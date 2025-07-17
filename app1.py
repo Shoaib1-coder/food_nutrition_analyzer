@@ -19,31 +19,27 @@ st.markdown(
     """
     <style>
     .title {
-        font-size: 6vw;
+        
         font-weight: bold;
+        font-size: 6vh;
         color: #4CAF50;
         text-align: center;
         margin-top: 20px;
     }
     .subtitle {
-        font-size: 4vw;
+        
         text-align: center;
         margin-bottom: 30px;
+        font-size: 4vh;
         color: #555;
     }
-    .result-box {
-        background-color: #f9f9f9;
-        overflow-x: auto;
-        padding: 20px;
-        border-radius: 15px;
-        box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
-        margin-top: 20px;
+   
     }
     .spinner {
         color: #007BFF;
     }
     </style>
-    <div class='title'>🥦🥩 Fruit, Vegetable & Meat Analyzer</div>
+    <div class='title'>Fruit,Vegetable & Meat Analyzer</div>
     <div class='subtitle'>Upload an image containing fruits, vegetables, or meat to get detailed nutrition info.</div>
     """,
     unsafe_allow_html=True
@@ -94,5 +90,4 @@ Then:
     # --- Display Results ---
     st.markdown("<div class='result-box'><h4>🧾 Nutritional Analysis Result:</h4></div>", unsafe_allow_html=True)
     st.markdown(f"<div class='result-box'><pre>{response.text}</pre></div>", unsafe_allow_html=True)
-
 
