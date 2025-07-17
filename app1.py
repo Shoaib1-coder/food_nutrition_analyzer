@@ -13,26 +13,27 @@ genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 model = genai.GenerativeModel("gemini-2.5-pro")
 
 # --- Streamlit UI ---
-st.set_page_config(page_title="Food Analyzer", layout="centered")
+st.set_page_config(page_title="Food Analyzer", layout="wide")
 
 st.markdown(
     """
     <style>
     .title {
-        font-size: 36px;
+        font-size: 6vw;
         font-weight: bold;
         color: #4CAF50;
         text-align: center;
         margin-top: 20px;
     }
     .subtitle {
-        font-size: 20px;
+        font-size: 4vw;
         text-align: center;
         margin-bottom: 30px;
         color: #555;
     }
     .result-box {
         background-color: #f9f9f9;
+        overflow-x: auto;
         padding: 20px;
         border-radius: 15px;
         box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
