@@ -46,7 +46,10 @@ st.markdown(
 )
 
 # --- File Upload ---
-uploaded_file = st.file_uploader("📤 Upload an image", type=["jpg", "jpeg", "png"])
+uploaded_file = st.file_uploader(
+    "📤 Upload an image", 
+    type=["jpg", "jpeg", "png", "webp", "bmp", "tiff", "gif", "jfif"]
+)
 
 if uploaded_file is not None:
     image = Image.open(uploaded_file)
