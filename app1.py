@@ -4,17 +4,23 @@ from PIL import Image
 import io
 import os
 
-# --- Set Gemini API Key ---
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-# Replace with your actual API key in your environment variables or secrets
+# ------------------ CONFIGURATION ------------------
 
-# --- Initialize Gemini model ---
-model = genai.GenerativeModel("gemini-2.5-pro")
-
-# --- Streamlit UI Configuration ---
+# Set page configuration
 st.set_page_config(page_title="Food Analyzer", layout="wide")
 
-# --- Custom HTML and CSS ---
+# Configure Gemini API Key (from environment or Streamlit secrets)
+api_key = os.getenv("GEMINI_API_KEY", st.secrets.get("GEMINI_API_KEY", ""))
+if not api_key:
+    st.error("🚨 Gemini API key not found. Set it in environment variables or Streamlit secrets.")
+    st.stop()
+genai.configure(api_key=api_key)
+
+# Initialize Gemini model
+model = genai.GenerativeModel("gemini-2.5-pro")
+
+# ------------------ STYLES & HEADERS ------------------
+
 st.markdown(
     """
     <style>
@@ -40,45 +46,37 @@ st.markdown(
         white-space: pre-wrap;
     }
     </style>
-    <div class='title'>Fruit, Vegetable & Meat Analyzer</div>
-    <div class='subtitle'>Upload or capture an image to get detailed nutrition info.</div>
+    <div class='title'>🥦 Fruit, Vegetable & Meat Analyzer</div>
+    <div class='subtitle'>Upload or capture an image to get detailed nutrition info</div>
     """,
     unsafe_allow_html=True
 )
 
-# --- Upload or Photo Capture UI ---
+# ------------------ IMAGE UPLOAD / CAMERA ------------------
+
 st.markdown("### 📤 Upload from gallery or take a new photo")
 
 upload_option = st.radio("Select image source:", ["📁 Upload from Gallery", "📸 Take a Photo"])
-
 image_file = None
 
 if upload_option == "📁 Upload from Gallery":
     uploaded_file = st.file_uploader("Choose an image", type=["jpg", "jpeg", "png", "webp", "bmp", "tiff", "gif", "jfif"])
-    if uploaded_file is not None:
+    if uploaded_file:
         image_file = uploaded_file
 
 elif upload_option == "📸 Take a Photo":
-    if 'camera_triggered' not in st.session_state:
-        st.session_state.camera_triggered = False
+    camera_input = st.camera_input("Take a photo using your device:")
+    if camera_input:
+        image_file = camera_input
 
-    if not st.session_state.camera_triggered:
-        if st.button("📸 Take a Photo Now"):
-            st.session_state.camera_triggered = True
-            st.experimental_rerun()
-    else:
-        camera_file = st.camera_input("📸 Capture your food image:")
-        if camera_file is not None:
-            image_file = camera_file
+# ------------------ IMAGE ANALYSIS ------------------
 
-
-# --- Process the image if available ---
-if image_file is not None:
+if image_file:
     try:
+        # Load and display image
         image = Image.open(image_file)
         if image.mode != "RGB":
             image = image.convert("RGB")
-
         st.image(image, caption="📸 Uploaded Image", use_container_width=True)
 
         # Convert image to bytes
@@ -86,7 +84,7 @@ if image_file is not None:
         image.save(image_bytes_io, format='PNG')
         image_bytes = image_bytes_io.getvalue()
 
-        # --- Prompt for Gemini ---
+        # Prompt for Gemini
         prompt = """
 You are a nutrition expert.
 
@@ -101,12 +99,12 @@ Analyze this image and:
 
 Then:
 - Count the **total number of unique items**
-- Calculate the **combined calories per 100g** (estimate based on items)
+- Calculate the **combined calories per 100g**
 - List **all vitamins combined**
 - Present the information in a clear, readable format
 """
 
-        # --- Get Gemini Response ---
+        # Request Gemini response
         with st.spinner("🔍 Analyzing image with Gemini..."):
             response = model.generate_content(
                 contents=[
@@ -116,9 +114,9 @@ Then:
                 generation_config={"temperature": 0.4}
             )
 
-        # --- Display Results ---
+        # Display response
         st.markdown("### 🧾 Nutritional Analysis Result")
         st.markdown(f"<div class='result-box'>{response.text}</div>", unsafe_allow_html=True)
 
     except Exception as e:
-        st.error(f"❌ Error: {e}")
+        st.error(f"❌ Failed to process image: {e}")
