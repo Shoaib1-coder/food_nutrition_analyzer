@@ -59,11 +59,18 @@ if upload_option == "📁 Upload from Gallery":
         image_file = uploaded_file
 
 elif upload_option == "📸 Take a Photo":
-    take_photo = st.button("📸 Take a Photo Now")
-    if take_photo:
-        camera_file = st.camera_input("Capture your food image:")
+    if 'camera_triggered' not in st.session_state:
+        st.session_state.camera_triggered = False
+
+    if not st.session_state.camera_triggered:
+        if st.button("📸 Take a Photo Now"):
+            st.session_state.camera_triggered = True
+            st.experimental_rerun()
+    else:
+        camera_file = st.camera_input("📸 Capture your food image:")
         if camera_file is not None:
             image_file = camera_file
+
 
 # --- Process the image if available ---
 if image_file is not None:
