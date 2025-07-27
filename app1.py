@@ -46,15 +46,26 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# --- Image Upload or Camera Input ---
-st.markdown("### 📤 Upload from gallery or capture a photo:")
+# --- Upload or Photo Capture UI ---
+st.markdown("### 📤 Upload from gallery or take a new photo")
 
-uploaded_file = st.file_uploader("Choose from gallery", type=["jpg", "jpeg", "png", "webp", "bmp", "tiff", "gif", "jfif"])
-camera_file = st.camera_input("Or capture a new photo")
+upload_option = st.radio("Select image source:", ["📁 Upload from Gallery", "📸 Take a Photo"])
 
-# Use the camera image if provided, otherwise fallback to uploaded file
-image_file = camera_file if camera_file else uploaded_file
+image_file = None
 
+if upload_option == "📁 Upload from Gallery":
+    uploaded_file = st.file_uploader("Choose an image", type=["jpg", "jpeg", "png", "webp", "bmp", "tiff", "gif", "jfif"])
+    if uploaded_file is not None:
+        image_file = uploaded_file
+
+elif upload_option == "📸 Take a Photo":
+    take_photo = st.button("📸 Take a Photo Now")
+    if take_photo:
+        camera_file = st.camera_input("Capture your food image:")
+        if camera_file is not None:
+            image_file = camera_file
+
+# --- Process the image if available ---
 if image_file is not None:
     try:
         image = Image.open(image_file)
