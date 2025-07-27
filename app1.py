@@ -46,7 +46,7 @@ st.markdown(
         white-space: pre-wrap;
     }
     </style>
-    <div class='title'>🥦 Fruit, Vegetable & Meat Analyzer</div>
+    <div class='title'>🥦 Fruit, Vegetable & Meat Analyzer122</div>
     <div class='subtitle'>Upload an image to get detailed nutrition info</div>
     """,
     unsafe_allow_html=True
